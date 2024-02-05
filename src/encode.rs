@@ -15,20 +15,32 @@ pub fn encode(text: String, mut key: i32) -> String {
       key-=26;
     }
 
-    for letter in text.chars() {
-        let letter_value = char_map
-            .get(&letter.to_string().to_lowercase())
-            .expect("Failed to get value")
-            + key;
-        let normalized_value = if letter_value > 26 {
-            letter_value - 26
-        } else {
-            letter_value
-        };
+  for letter in text.chars() {
+      if letter.is_alphabetic() {
+          let letter_value = char_map
+              .get(&letter.to_string().to_lowercase())
+              .cloned()
+              .unwrap_or(0) + key;
 
-        let letter_key = find_keys_for_value(&char_map, normalized_value);
-        encoded_text.push_str(letter_key[0]);
-    }
+          let normalized_value = if letter_value > 26 {
+              letter_value - 26
+          } else {
+              letter_value
+          };
+
+          let letter_key = find_keys_for_value(&char_map, normalized_value);
+          if let Some(encoded_letter) = letter_key.get(0) {
+              encoded_text.push_str(encoded_letter);
+          } else {
+              // Handle the case where letter_key is empty (not found in char_map)
+              panic!("Unexpected error: letter_key is empty");
+          }
+      } else {
+          // Add non-alphabetic characters directly to the encoded text
+          encoded_text.push(letter);
+      }
+  }
+
 
     encoded_text
 }
