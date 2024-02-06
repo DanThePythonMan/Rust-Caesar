@@ -24,16 +24,19 @@ pub fn encode(text: String, mut key: i32) -> String {
 
           let normalized_value = if letter_value > 26 {
               letter_value - 26
-          } else {
+          } else{ let normalized_value = if letter_value <0{
+            letter_value+=26
+          }else{
               letter_value
-          };
+          }};
+          
 
           let letter_key = find_keys_for_value(&char_map, normalized_value);
           if let Some(encoded_letter) = letter_key.get(0) {
               encoded_text.push_str(encoded_letter);
           } else {
               // Handle the case where letter_key is empty (not found in char_map)
-              panic!("Unexpected error: letter_key is empty");
+              panic!("Unexpected error: letter_key is empty. Are you sure this text is correct?");
           }
       } else {
           // Add non-alphabetic characters directly to the encoded text
